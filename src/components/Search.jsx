@@ -9,8 +9,6 @@ function Search() {
   const [find, setFind] = useState("");
   const [result, setResult] = useState({});
 
-  useEffect(function () {}, []);
-
   function handleClick() {
     async function fetchData() {
       const res = await fetch(
