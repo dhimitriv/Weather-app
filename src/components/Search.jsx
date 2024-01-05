@@ -6,19 +6,46 @@ const API = {
 };
 
 function Search() {
+  const [error, setError] = useState();
   const [find, setFind] = useState("");
   const [result, setResult] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   function handleClick() {
     async function fetchData() {
-      const res = await fetch(
-        `${API.base}weather?q=${find}&units=metric&APPID=${API.key}`
-      );
-      const data = await res.json();
-      setResult(data);
-      console.log(data);
+      setIsLoading(true);
+
+      try {
+        const res = await fetch(
+          `${API.base}weather?q=${find}&units=metric&APPID=${API.key}`
+        );
+        const data = await res.json();
+        setResult(data);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setIsLoading(false);
+      }
     }
     fetchData();
+  }
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <p className="text-white text-3xl">Loading data...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <p className="text-white text-xl mx-auto">
+          Something went wrong! Please try again!
+        </p>
+      </div>
+    );
   }
 
   const getWeatherIconUrl = (iconCode) => {
@@ -32,6 +59,20 @@ function Search() {
           Weather today
         </h1>
       </div>
+
+      {isLoading && (
+        <div className="w-full h-screen flex items-center justify-center">
+          <p className="text-white text-3xl">Loading data...</p>
+        </div>
+      )}
+
+      {error && (
+        <div className="h-screen flex items-center justify-center">
+          <p className="text-white text-xl mx-auto">
+            Something went wrong! Please try again!
+          </p>
+        </div>
+      )}
 
       <div className="flex items-center justify-center gap-3">
         <input
